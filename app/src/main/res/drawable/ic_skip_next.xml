@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material Symbols Outlined "skip_next" (Apache License 2.0, https://fonts.google.com/icons). 원본 SVG viewBox 0 -960 960 960. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M660-240v-480h80v480h-80Zm-440 0v-480l360 240-360 240Zm80-240Zm0 90 136-90-136-90v180Z" />
+    </group>
+</vector>

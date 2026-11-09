@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Pleosredlightvocaapp" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- 다크 고정(theme4). 창 바탕은 앱 바탕 토큰 bg #131417 과 같게 둬 시작 때 흰 화면이 비치지 않게 한다. -->
+    <style name="Theme.Pleosredlightvocaapp" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#FF131417</item>
+        <item name="android:statusBarColor">#FF131417</item>
+        <item name="android:navigationBarColor">#FF131417</item>
+    </style>
 </resources>

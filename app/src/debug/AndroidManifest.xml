@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- android.permission.DUMP: adb shell은 보유, 일반 앱은 보낼 수 없어 외부 앱의 차량 상태 위조를 막는다. 디버그 빌드 전용. -->
+        <receiver
+            android:name="com.stai.pleos_red_light_voca_app.presentation.debug.DebugVehicleReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP">
+            <intent-filter>
+                <action android:name="com.stai.pleos_red_light_voca_app.debug.VEHICLE" />
+                <action android:name="com.stai.pleos_red_light_voca_app.debug.MEDIA" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

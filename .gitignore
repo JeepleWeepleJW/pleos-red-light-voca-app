@@ -402,3 +402,6 @@ obj/
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/android,androidstudio,kotlin,intellij,intellij+iml,intellij+all
+
+# 디자인 산출물(design/ 하위)
+/design/*

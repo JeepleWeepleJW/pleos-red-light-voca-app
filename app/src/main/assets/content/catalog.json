@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 2,
+  "note": "초기 샘플 콘텐츠(텍스트 전용). 구조: 콘텐츠(하루 학습 묶음) > 챕터(단어 1개 = 영어·한국어 텍스트). 음성은 런타임 TTS로 합성한다(ADR-002).",
+  "contents": [
+    {
+      "contentId": "sample-day01",
+      "title": "샘플 1일차: 도로와 이동",
+      "chapters": [
+        { "chapterId": "d01-01", "word": "signal", "partOfSpeech": "noun", "meaningKo": "신호" },
+        { "chapterId": "d01-02", "word": "intersection", "partOfSpeech": "noun", "meaningKo": "교차로" },
+        { "chapterId": "d01-03", "word": "pedestrian", "partOfSpeech": "noun", "meaningKo": "보행자" },
+        { "chapterId": "d01-04", "word": "detour", "partOfSpeech": "noun", "meaningKo": "우회로" },
+        { "chapterId": "d01-05", "word": "merge", "partOfSpeech": "verb", "meaningKo": "합류하다" },
+        { "chapterId": "d01-06", "word": "yield", "partOfSpeech": "verb", "meaningKo": "양보하다" },
+        { "chapterId": "d01-07", "word": "commute", "partOfSpeech": "noun", "meaningKo": "통근" },
+        { "chapterId": "d01-08", "word": "destination", "partOfSpeech": "noun", "meaningKo": "목적지" },
+        { "chapterId": "d01-09", "word": "congestion", "partOfSpeech": "noun", "meaningKo": "혼잡" },
+        { "chapterId": "d01-10", "word": "patient", "partOfSpeech": "adjective", "meaningKo": "참을성 있는" }
+      ]
+    },
+    {
+      "contentId": "sample-day02",
+      "title": "샘플 2일차: 일상과 업무",
+      "chapters": [
+        { "chapterId": "d02-01", "word": "schedule", "partOfSpeech": "noun", "meaningKo": "일정" },
+        { "chapterId": "d02-02", "word": "available", "partOfSpeech": "adjective", "meaningKo": "이용할 수 있는" },
+        { "chapterId": "d02-03", "word": "postpone", "partOfSpeech": "verb", "meaningKo": "미루다" },
+        { "chapterId": "d02-04", "word": "confirm", "partOfSpeech": "verb", "meaningKo": "확인하다" },
+        { "chapterId": "d02-05", "word": "deadline", "partOfSpeech": "noun", "meaningKo": "마감 기한" },
+        { "chapterId": "d02-06", "word": "reliable", "partOfSpeech": "adjective", "meaningKo": "믿을 수 있는" },
+        { "chapterId": "d02-07", "word": "improve", "partOfSpeech": "verb", "meaningKo": "개선하다" },
+        { "chapterId": "d02-08", "word": "opportunity", "partOfSpeech": "noun", "meaningKo": "기회" },
+        { "chapterId": "d02-09", "word": "brief", "partOfSpeech": "adjective", "meaningKo": "짧은, 간단한" },
+        { "chapterId": "d02-10", "word": "achieve", "partOfSpeech": "verb", "meaningKo": "이루다" }
+      ]
+    }
+  ]
+}
