@@ -42,7 +42,8 @@ import kotlinx.coroutines.launch
  *   허락(Play)일 때만 챕터 WAV를 준비해 seekTo(0) 후 재생한다. 그 밖에는 재생하지 않는다.
  * - 플레이리스트는 항상 "현재 챕터 1개"로 보인다. 컨트롤러의 setMediaItems·prepare·seek는 무시한다
  *   (playFromMediaId로 다른 챕터를 골라도 현재 챕터를 재생한다).
- * - 앱 코드가 스스로 재생을 시작하는 경로는 없다. ExoPlayer.play()는 컨트롤러 Play 명령 처리 안에서만 부른다.
+ * - 정차 자동 재생: 학습 세션이 정차 확정 때 [startAutomatically]로 티켓을 넘기면 같은 방식으로 재생한다
+ *   (사용자 결정 2026-11-14: 화면 '학습 시작'을 자동 재생 동의로 본다). 그 밖에 앱이 스스로 재생을 시작하는 경로는 없다.
  * - 오디오 포커스는 ExoPlayer(handleAudioFocus=true)가 다룬다. 상실 시 멈추고 재시도·자동 재개하지 않는다.
  *
  * 모든 메서드는 메인 스레드에서 호출된다. 학습 세션은 [useCases]의 domain UseCase로만 다룬다.
@@ -371,6 +372,13 @@ class GatedPlayer(
         invalidateState()
     }
 
+    override val canStartAutomatically: Boolean get() = true
+
+    override fun startAutomatically(ticket: PlayTicket) {
+        start(ticket, from = AUTO_PLAY_SOURCE)
+        invalidateState()
+    }
+
     /** 학습 세션의 정지 요청(출발·기어 이탈·데이터 오류·준비 중 서행·학습 종료). 준비 중이면 시작하지 않는다. */
     override fun pause(reason: PauseReason) {
         Timber.i("player stop requested by controller: $reason")
@@ -406,5 +414,10 @@ class GatedPlayer(
 
     fun releaseInternal() {
         exo.removeListener(exoListener)
+    }
+
+    private companion object {
+        /** 로그의 controller= 자리에 쓰는 정차 자동 재생 표시 */
+        const val AUTO_PLAY_SOURCE = "auto-stop"
     }
 }

@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
  * Media3 MediaLibraryService. 매니페스트에서 `androidx.media3.session.MediaLibraryService`와
  * `android.media.browse.MediaBrowserService` intent-filter로 노출한다(Pleos Music/Audio 가이드).
  *
- * - 재생 시작은 [GatedPlayer]가 컨트롤러 Play 명령에서만 한다. 서비스 생성·연결로는 재생하지 않는다.
+ * - 재생 시작은 [GatedPlayer]가 한다: 학습 ON 중 정차 확정 시 자동 재생, 또는 컨트롤러 Play 명령. 서비스 생성·연결로는 재생하지 않는다.
  * - 포그라운드 서비스(mediaPlayback)는 Media3가 재생 중에 올린다. 알림 갱신 오버라이드로 유지하지 않는다.
  * - onTaskRemoved: 재생 정지 → stopSelf() → super (Pleos 가이드 순서).
  */

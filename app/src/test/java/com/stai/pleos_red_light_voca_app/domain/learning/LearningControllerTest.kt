@@ -66,7 +66,12 @@ private class FakeProgressRepository(initial: Progress = Progress()) : ProgressR
 
 private class FakePlayer : PlayerControl {
     val pauses = mutableListOf<PauseReason>()
+    /** false(기본)면 서비스 플레이어가 없는 상태처럼 자동 재생을 받지 않는다. */
+    var autoCapable = false
+    val autoStarts = mutableListOf<PlayTicket>()
     override fun pause(reason: PauseReason) { pauses += reason }
+    override val canStartAutomatically: Boolean get() = autoCapable
+    override fun startAutomatically(ticket: PlayTicket) { autoStarts += ticket }
 }
 
 private val catalog = Catalog(
@@ -731,6 +736,84 @@ class LearningControllerTest {
         assertTrue(logs.any { it.startsWith("progress save FAILED") })
         assertFalse(logs.any { it.contains("d1-1 completed") && it.startsWith("progress saved") })
         assertEquals("d1-2", state.currentChapterId) // 메모리 진도는 유지
+    }
+
+    // ---- 정차 자동 재생(사용자 결정 2026-11-14) ----
+
+    private fun Harness.stopForAutoPlay() {
+        speed(0f)
+        advance(3_000)
+    }
+
+    @Test fun auto_play_starts_on_confirmed_stop() = test {
+        player.autoCapable = true
+        start(); driveAndArm(); stopForAutoPlay()
+        assertEquals(1, player.autoStarts.size)
+        assertEquals("d1-1", player.autoStarts.single().chapterId)
+        assertEquals(GatePhase.USED, state.gatePhase)
+        assertEquals(PlaybackPhase.PREPARING, state.playback)
+        assertTrue(controller.isTicketValid(player.autoStarts.single()))
+    }
+
+    @Test fun auto_play_on_first_stop_right_after_start() = test {
+        player.autoCapable = true
+        gear(Gear.DRIVE); speed(0f)
+        start()
+        assertTrue(player.autoStarts.isEmpty())
+        advance(3_000)
+        assertEquals(1, player.autoStarts.size)
+    }
+
+    @Test fun auto_play_waits_for_player_without_using_the_stop() = test {
+        start(); driveAndArm(); stop()
+        assertTrue(player.autoStarts.isEmpty())
+        assertEquals(GatePhase.ARMED, state.gatePhase)
+        player.autoCapable = true
+        controller.tryAutoPlay()
+        assertEquals(1, player.autoStarts.size)
+        assertEquals(GatePhase.USED, state.gatePhase)
+    }
+
+    @Test fun moving_stops_auto_played_track() = test {
+        player.autoCapable = true
+        start(); driveAndArm(); stopForAutoPlay()
+        val t = player.autoStarts.single()
+        controller.onPlaybackStarted(t)
+        speed(5f)
+        assertEquals(listOf<PauseReason>(PlaybackEnd.MOVING), player.pauses)
+        assertEquals(PlaybackPhase.IDLE, state.playback)
+        assertFalse(controller.isTicketValid(t))
+    }
+
+    @Test fun auto_play_once_per_stop() = test {
+        player.autoCapable = true
+        start(); driveAndArm(); stopForAutoPlay()
+        val t = player.autoStarts.single()
+        controller.onPlaybackInterrupted(t, PlaybackEnd.FOCUS_LOSS)
+        controller.tryAutoPlay()
+        speed(0.3f); speed(0f)
+        assertEquals(1, player.autoStarts.size)
+        // 재주행 뒤 다음 정차에서 다음 턴을 다시 자동 재생(중단된 d1-1부터)
+        driveAndArm(); stopForAutoPlay()
+        assertEquals(listOf("d1-1", "d1-1"), player.autoStarts.map { it.chapterId })
+    }
+
+    @Test fun no_auto_play_while_learning_off() = test {
+        player.autoCapable = true
+        driveAndArmIgnored()
+        controller.tryAutoPlay()
+        assertTrue(player.autoStarts.isEmpty())
+    }
+
+    @Test fun no_auto_play_while_creeping_until_stopped_again() = test {
+        start(); driveAndArm(); stop()
+        speed(0.8f)
+        assertEquals(GatePhase.ARMED_CREEP, state.gatePhase)
+        player.autoCapable = true
+        controller.tryAutoPlay()
+        assertTrue(player.autoStarts.isEmpty())
+        speed(0f)
+        assertEquals(1, player.autoStarts.size)
     }
 
     @Test fun progress_saved_logged_after_save_completes() = test {

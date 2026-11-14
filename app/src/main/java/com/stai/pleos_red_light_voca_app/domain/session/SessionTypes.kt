@@ -3,6 +3,7 @@ package com.stai.pleos_red_light_voca_app.domain.session
 import com.stai.pleos_red_light_voca_app.core.common.Logger
 import com.stai.pleos_red_light_voca_app.core.entity.Catalog
 import com.stai.pleos_red_light_voca_app.domain.learning.PauseReason
+import com.stai.pleos_red_light_voca_app.domain.learning.PlayTicket
 import com.stai.pleos_red_light_voca_app.domain.learning.PlayerControl
 
 /** 앱 시작 상태 */
@@ -58,5 +59,12 @@ internal class PlayerControlRelay(private val logger: Logger) : PlayerControl {
     override fun pause(reason: PauseReason) {
         val t = target
         if (t == null) logger.i("pause($reason) requested but no player attached") else t.pause(reason)
+    }
+
+    override val canStartAutomatically: Boolean get() = target?.canStartAutomatically == true
+
+    override fun startAutomatically(ticket: PlayTicket) {
+        val t = target
+        if (t == null) logger.w("auto-play $ticket requested but no player attached") else t.startAutomatically(ticket)
     }
 }

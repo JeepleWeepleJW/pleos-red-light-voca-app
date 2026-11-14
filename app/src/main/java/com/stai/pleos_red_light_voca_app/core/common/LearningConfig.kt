@@ -8,13 +8,13 @@ package com.stai.pleos_red_light_voca_app.core.common
  */
 data class LearningConfig(
     /** 감지 활성(무장): D단에서 이 속도 이상. km/h */
-    val armSpeedKmh: Float = 8f,
+    val armSpeedKmh: Float = 3f,
     /** 감지 활성: 위 조건이 이 시간 동안 연속. ms (단조 시계) */
     val armHoldMs: Long = 3_000L,
     /** 정차 후보·확정: D단에서 이 속도 이하. km/h */
     val stopSpeedKmh: Float = 0.5f,
     /** 정차 확정: 위 조건이 이 시간 동안 연속. ms (단조 시계) */
-    val stopHoldMs: Long = 3_000L,
+    val stopHoldMs: Long = 5_000L,
     /** 이동 판정: 이 속도 초과를 받는 즉시 재생 중단. (stopSpeedKmh, moveSpeedKmh] 구간은 새 재생만 금지. km/h */
     val moveSpeedKmh: Float = 1.0f,
     /** 챕터 오디오에서 단어와 뜻 사이 무음 길이. ms */

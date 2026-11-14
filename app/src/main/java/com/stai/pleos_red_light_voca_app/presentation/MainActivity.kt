@@ -9,13 +9,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.stai.pleos_red_light_voca_app.presentation.learning.LearningScreen
+import com.stai.pleos_red_light_voca_app.presentation.playback.LearningServiceConnection
 import com.stai.pleos_red_light_voca_app.presentation.theme.PleosredlightvocaappTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject lateinit var serviceConnection: LearningServiceConnection
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        serviceConnection.start()
         enableEdgeToEdge()
         setContent {
             PleosredlightvocaappTheme {

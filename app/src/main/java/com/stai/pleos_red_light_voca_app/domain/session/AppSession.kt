@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
  * [LearningController]를 공유한다. 모든 호출은 메인 스레드에서 한다([scope]는 메인 디스패처).
  *
  * [start] 시: 카탈로그 로드 → 컨트롤러 생성·진도 복원(학습 OFF) → 차량 입력 수집 → 음원 확인.
- * 여기서 재생을 시작하는 경로는 없다.
+ * 학습이 OFF로 시작하므로 앱 시작만으로는 재생하지 않는다.
  *
  * @param vehicleSourceFactory 차량 입력 수집을 (다시) 시작할 때마다 새 소스를 만든다.
  */
@@ -216,9 +216,10 @@ class AppSession(
     suspend fun chapterAudio(contentId: String, chapter: Chapter): ChapterAudioResult =
         audioSource.chapterAudio(contentId, chapter)
 
-    /** 컨트롤러의 정지 요청을 받을 플레이어를 붙인다(서비스가 플레이어를 만든 뒤). */
+    /** 컨트롤러의 정지·자동 재생 요청을 받을 플레이어를 붙인다(서비스가 플레이어를 만든 뒤). 이미 정차 확정 중이면 바로 재생한다. */
     fun attachPlayer(player: PlayerControl) {
         playerRelay.target = player
+        controllerOrNull?.tryAutoPlay()
     }
 
     /** [player]가 붙어 있을 때만 뗀다(서비스 종료 시). */

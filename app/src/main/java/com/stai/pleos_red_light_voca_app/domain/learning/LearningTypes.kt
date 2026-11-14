@@ -71,12 +71,18 @@ enum class PlaybackEnd {
 typealias PauseReason = PlaybackEnd
 
 /**
- * 컨트롤러 → 플레이어 경계. 재생 "시작" 메서드는 일부러 없다.
- * 재생 시작은 MediaSession 컨트롤러 명령에서만 한다(ADR-001).
+ * 컨트롤러 → 플레이어 경계.
+ * 정차 자동 재생(사용자 결정 2026-11-14: 화면 '학습 시작'을 자동 재생 동의로 본다)은 [startAutomatically]로 시작한다.
+ * 기본 구현은 자동 재생을 지원하지 않는다.
  */
 fun interface PlayerControl {
     /** 재생 중이거나 준비 중이면 멈춘다(준비 중이면 시작하지 않는다). 멱등. */
     fun pause(reason: PauseReason)
+
+    /** false면 컨트롤러가 정차 시도를 쓰지 않고, 플레이어가 붙을 때 다시 시도한다. */
+    val canStartAutomatically: Boolean get() = false
+
+    fun startAutomatically(ticket: PlayTicket) {}
 }
 
 /** Play 명령을 받은 쪽(MediaSession)이 보관했다가 실제 play 직전에 [LearningController.isTicketValid]로 확인한다. */

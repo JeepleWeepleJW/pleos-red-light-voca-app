@@ -30,8 +30,10 @@ import kotlinx.coroutines.sync.withLock
  * 스레드: 모든 공개 메서드는 같은 스레드(메인)에서 호출한다. [scheduler] 콜백도 같은 스레드여야 한다.
  * 진도 저장만 [scope]에서 비동기로 한다.
  *
- * 재생 시작 경로는 없다. [onPlayCommand]는 "재생해도 된다"는 결정([PlayDecision.Play])만 돌려주고,
- * 실제 seekTo(0)·play()는 MediaSession 명령 처리 쪽이 한다.
+ * 재생 시작 경로는 두 가지다.
+ * - 정차 자동 재생: 학습 ON에서 정차가 확정(ARMED)되면 [player]에 바로 시작을 요청한다
+ *   (사용자 결정 2026-11-14: 화면 '학습 시작'을 자동 재생 동의로 본다. ADR-001의 키 전용 재생을 바꿈).
+ * - 컨트롤러 Play 명령: [onPlayCommand]는 결정([PlayDecision.Play])만 돌려주고, 실제 재생은 MediaSession 명령 처리 쪽이 한다.
  */
 class LearningController(
     private val catalog: Catalog,
@@ -49,6 +51,8 @@ class LearningController(
     private val gate = StopGate(config, clock, scheduler) { old, new ->
         logger.i("gate $old -> $new")
         _state.update { it.copy(gatePhase = new) }
+        // ARMED는 판정의 마지막 전이라, 여기서 consume(USED)해도 이어지는 판정과 겹치지 않는다
+        if (new == GatePhase.ARMED) tryAutoPlay()
     }
 
     /** 콘텐츠별 마지막 완료 챕터 (메모리 사본) */
@@ -218,6 +222,26 @@ class LearningController(
         activeTicket = ticket
         _state.update { it.copy(playback = PlaybackPhase.PREPARING) }
         return PlayDecision.Play(ticket)
+    }
+
+    /**
+     * 정차 자동 재생. 학습 ON·재생 없음·ARMED이고 플레이어가 시작할 수 있을 때만 이번 정차를 쓰고 재생을 요청한다.
+     * 플레이어가 없으면 정차를 쓰지 않으므로, 플레이어가 붙을 때(AppSession.attachPlayer) 다시 부른다.
+     */
+    fun tryAutoPlay() {
+        val s = _state.value
+        if (!s.learningOn || s.playback != PlaybackPhase.IDLE || gate.phase != GatePhase.ARMED) return
+        if (!player.canStartAutomatically) {
+            logger.i("auto-play waiting: no player attached")
+            return
+        }
+        when (val decision = decidePlay()) {
+            is PlayDecision.Play -> {
+                logger.i("auto-play on stop -> ${decision.ticket}")
+                player.startAutomatically(decision.ticket)
+            }
+            else -> logger.i("auto-play skipped: $decision")
+        }
     }
 
     /** Pause 명령. 플레이어 정지는 MediaSession이 그대로 수행한다. 자동 재개 없음. */
