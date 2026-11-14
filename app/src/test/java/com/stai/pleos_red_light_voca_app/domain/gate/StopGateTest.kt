@@ -122,9 +122,9 @@ class StopGateTest {
 
     @Test fun move_threshold_is_exclusive() {
         toArmed()
-        assertNull(drive(1.0f))
+        assertNull(drive(3.0f))
         assertEquals(GatePhase.ARMED_CREEP, gate.phase)
-        assertEquals(HaltReason.MOVING, drive(1.01f))
+        assertEquals(HaltReason.MOVING, drive(3.01f))
         assertEquals(GatePhase.WAITING_DRIVE, gate.phase)
     }
 
@@ -141,11 +141,11 @@ class StopGateTest {
         assertTrue(gate.canPlay)
     }
 
-    @Test fun move_boundary_one_is_creep_and_above_one_ends_stop() {
+    @Test fun move_boundary_three_is_creep_and_above_three_ends_stop() {
         toArmed()
-        assertNull(drive(1.0f))
+        assertNull(drive(3.0f))
         assertEquals(GatePhase.ARMED_CREEP, gate.phase)
-        assertEquals(HaltReason.MOVING, drive(1.01f))
+        assertEquals(HaltReason.MOVING, drive(3.01f))
         assertEquals(GatePhase.WAITING_DRIVE, gate.phase)
     }
 
@@ -338,7 +338,7 @@ class StopGateTest {
         gate.activate(0f, Gear.DRIVE)
         time.advance(3_000)
         assertEquals(GatePhase.ARMED, gate.phase)
-        drive(2f)
+        drive(4f)
         assertEquals(GatePhase.WAITING_DRIVE, gate.phase)
         drive(0f)
         time.advance(10_000)

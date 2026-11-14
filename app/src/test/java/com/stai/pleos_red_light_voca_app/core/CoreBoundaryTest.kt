@@ -20,7 +20,7 @@ class CoreBoundaryTest {
         assertEquals(3_000L, c.armHoldMs)
         assertEquals(0.5f, c.stopSpeedKmh)
         assertEquals(3_000L, c.stopHoldMs)
-        assertEquals(1.0f, c.moveSpeedKmh)
+        assertEquals(3.0f, c.moveSpeedKmh)
     }
 
     @Test(expected = IllegalArgumentException::class)

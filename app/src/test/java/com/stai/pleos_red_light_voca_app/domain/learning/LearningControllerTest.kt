@@ -426,10 +426,10 @@ class LearningControllerTest {
         speed(0.4f)
         val t = playTicket()
         controller.onPlaybackStarted(t)
-        speed(1.0f) // (0.5, 1] 서행: 재생 유지
+        speed(3.0f) // (0.5, 3] 서행: 재생 유지
         assertTrue(player.pauses.isEmpty())
         assertEquals(PlaybackPhase.PLAYING, state.playback)
-        speed(1.1f) // 1 초과: 즉시 pause
+        speed(3.1f) // 3 초과: 즉시 pause
         assertEquals(listOf(PlaybackEnd.MOVING), player.pauses)
         assertEquals(PlaybackPhase.IDLE, state.playback)
     }

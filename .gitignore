@@ -405,3 +405,6 @@ obj/
 
 # 디자인 산출물(design/ 하위)
 /design/*
+
+# 개인 기획 문서(docs/ 하위)
+/docs/
